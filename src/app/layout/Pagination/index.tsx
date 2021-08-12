@@ -1,5 +1,5 @@
 import React from "react";
-import { Pagination } from "react-bootstrap";
+import { Pagination, Container, Col, Row } from "react-bootstrap";
 
 interface PaginationProps {
   totalCountOfRegisters?: number;
@@ -19,8 +19,8 @@ function generatePagesArray(from: number, to: number) {
 }
 
 export function PaginationComponent({
-  totalCountOfRegisters=500,
-  registerPerPage = 10,
+  totalCountOfRegisters = 500,
+  registerPerPage = 20,
   currentPage = 1,
   onPageChange,
 }: PaginationProps) {
@@ -40,75 +40,79 @@ export function PaginationComponent({
       : [];
 
   return (
-    <div>
-      <Pagination>
-        {currentPage > 1 + siblingsCount && (
-          <>
-            <Pagination.Item
-              onClick={() => {
-                onPageChange(1);
-              }}
-            >
-              {1}
-            </Pagination.Item>
-            <Pagination.Ellipsis
-              onClick={() => {
-                onPageChange(currentPage - siblingsCount - 1);
-              }}
-            />
-          </>
-        )}
-        {previousPages.length > 0 &&
-          previousPages.map((page) => {
-            return (
-              <Pagination.Item
-                key={page}
-                onClick={() => {
-                  onPageChange(page);
-                }}
-              >
-                {page}
-              </Pagination.Item>
-            );
-          })}
-
-        <Pagination.Item active>{currentPage}</Pagination.Item>
-
-        {nextPages.length > 0 &&
-          nextPages.map((page) => {
-            return (
-              <Pagination.Item
-                key={page}
-                onClick={() => {
-                  onPageChange(page);
-                }}
-              >
-                {page}
-              </Pagination.Item>
-            );
-          })}
-
-        {currentPage + siblingsCount < lastPage && (
-          <>
-            {currentPage + siblingsCount + 1 < lastPage && (
+    <Container>
+      <Row className="justify-content-md-center">
+        <Col md="auto">
+          <Pagination>
+            {currentPage > 1 + siblingsCount && (
               <>
+                <Pagination.Item
+                  onClick={() => {
+                    onPageChange(1);
+                  }}
+                >
+                  {1}
+                </Pagination.Item>
                 <Pagination.Ellipsis
                   onClick={() => {
-                    onPageChange(currentPage + siblingsCount + 1);
+                    onPageChange(currentPage - siblingsCount - 1);
                   }}
                 />
               </>
             )}
-            <Pagination.Item
-              onClick={() => {
-                onPageChange(lastPage);
-              }}
-            >
-              {lastPage}
-            </Pagination.Item>
-          </>
-        )}
-      </Pagination>
-    </div>
+            {previousPages.length > 0 &&
+              previousPages.map((page) => {
+                return (
+                  <Pagination.Item
+                    key={page}
+                    onClick={() => {
+                      onPageChange(page);
+                    }}
+                  >
+                    {page}
+                  </Pagination.Item>
+                );
+              })}
+
+            <Pagination.Item active>{currentPage}</Pagination.Item>
+
+            {nextPages.length > 0 &&
+              nextPages.map((page) => {
+                return (
+                  <Pagination.Item
+                    key={page}
+                    onClick={() => {
+                      onPageChange(page);
+                    }}
+                  >
+                    {page}
+                  </Pagination.Item>
+                );
+              })}
+
+            {currentPage + siblingsCount < lastPage && (
+              <>
+                {currentPage + siblingsCount + 1 < lastPage && (
+                  <>
+                    <Pagination.Ellipsis
+                      onClick={() => {
+                        onPageChange(currentPage + siblingsCount + 1);
+                      }}
+                    />
+                  </>
+                )}
+                <Pagination.Item
+                  onClick={() => {
+                    onPageChange(lastPage);
+                  }}
+                >
+                  {lastPage}
+                </Pagination.Item>
+              </>
+            )}
+          </Pagination>
+        </Col>
+      </Row>
+    </Container>
   );
 }
