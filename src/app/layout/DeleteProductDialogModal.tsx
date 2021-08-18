@@ -6,9 +6,11 @@ import { useMutation } from "react-query";
 import { queryClient } from "../../data/config/queryClient";
 import { useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { RelatedProduct } from "../../domain/models/related-product.model";
 
 interface RelatedProductModalProps {
   refresh: () => void;
+  relatedProducts?: RelatedProduct[];
   mainProductName?: string;
   mainProductId?: number;
   showDeleteMainDialogModal: boolean;
@@ -17,6 +19,7 @@ interface RelatedProductModalProps {
 
 export default function DeleteProductDialogModal({
   refresh,
+  relatedProducts,
   mainProductName = "Tomate",
   mainProductId = 0,
   showDeleteMainDialogModal,
@@ -33,6 +36,12 @@ export default function DeleteProductDialogModal({
           history.push("/");
         })
         .catch((error) => {
+          if (relatedProducts) {
+            toast.error(
+              `Exclua os relacionamentos entre produtos primeiramente`
+            );
+            handleCloseDeleteMainDialogModal();
+          }
           toast.error(`Houve algum erro na exclusão: ${error.message}`);
           handleCloseDeleteMainDialogModal();
         });

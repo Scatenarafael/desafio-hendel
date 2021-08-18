@@ -358,6 +358,7 @@ function ProductDetail() {
       />
       <DeleteProductDialogModal
         refresh={handleRefresh}
+        relatedProducts={productData?.relatedProducts}
         mainProductName={productData?.name}
         mainProductId={productData?.id}
         showDeleteMainDialogModal={showDeleteMainDialogModal}
