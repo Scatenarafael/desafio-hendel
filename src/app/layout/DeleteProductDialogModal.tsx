@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useMutation } from "react-query";
 import { queryClient } from "../../data/config/queryClient";
 import { useHistory } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 interface RelatedProductModalProps {
   refresh: () => void;
@@ -21,30 +22,34 @@ export default function DeleteProductDialogModal({
   showDeleteMainDialogModal,
   handleCloseDeleteMainDialogModal,
 }: RelatedProductModalProps) {
+  const [showDisabledButton, setShowDisabledButton] = useState(false);
   const history = useHistory();
   const removeProduct = useMutation(
     async () => {
       repo
         .deleteProduct(mainProductId)
-        .then((response) => {
-          console.log(response);
-          toast.success("Produto excluído com sucesso");
+        .then(() => {
           handleCloseDeleteMainDialogModal();
           history.push("/");
-          refresh();
         })
         .catch((error) => {
           toast.error(`Houve algum erro na exclusão: ${error.message}`);
           handleCloseDeleteMainDialogModal();
-          refresh();
         });
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("product");
+        queryClient.invalidateQueries("products");
       },
     }
   );
+  useEffect(() => {
+    if (removeProduct.isLoading) {
+      setShowDisabledButton(true);
+    } else {
+      setShowDisabledButton(false);
+    }
+  }, [removeProduct]);
 
   async function handleDeleteProduct() {
     await removeProduct.mutateAsync();
@@ -64,7 +69,11 @@ export default function DeleteProductDialogModal({
           {`Tem certeza que deseja deletar o produto ${mainProductName}?`}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleDeleteProduct}>
+          <Button
+            variant="danger"
+            onClick={handleDeleteProduct}
+            disabled={showDisabledButton}
+          >
             Sim
           </Button>
           <Button

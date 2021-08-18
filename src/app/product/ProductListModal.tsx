@@ -57,7 +57,12 @@ function ProductListModal({
             handleClose();
           })
           .catch((error) => {
-            toast.error(`Houve algum erro: ${error.message}`);
+            if (relatedProductId === productMainId) {
+              toast.error(`Não é possivel relacionar um produto a ele mesmo!`);
+            } else {
+              toast.error(`Houve algum erro: ${error.message}`);
+            }
+            return;
           });
       } else {
         toast.error("Produto já relacionado");
@@ -300,39 +305,49 @@ function ProductListModal({
                   </thead>
                   <tbody>
                     {productCollection &&
-                      productCollection.data.map((product) => (
-                        <tr key={product.id}>
-                          <td>{product.id}</td>
-                          <td>{product.name}</td>
-                          <td>R$ {product.price.toFixed(2)}</td>
-                          <td
-                            style={{
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Button
-                              style={{
-                                width: "1.2rem",
-                                height: "1.2rem",
-                                padding: "0",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                              onClick={() => {
-                                handleAddRelatedProduct(product.id);
-                              }}
-                            >
-                              <FiPlusSquare
-                                size="1rem"
-                                style={{ margin: "0" }}
-                              />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
+                      // eslint-disable-next-line array-callback-return
+                      productCollection.data.map((product) => {
+                        if (product.id !== productMainId) {
+                          return (
+                            <tr key={product.id}>
+                              <td>{product.id}</td>
+                              <td>{product.name}</td>
+                              <td>R$ {product.price.toFixed(2)}</td>
+                              <td
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Button
+                                  style={{
+                                    width: "1.2rem",
+                                    height: "1.2rem",
+                                    padding: "0",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
+                                  onClick={() => {
+                                    handleAddRelatedProduct(product.id);
+                                  }}
+                                  disabled={relatedProducts?.some(
+                                    (relatedProduct) => {
+                                      return relatedProduct.id === product.id;
+                                    }
+                                  )}
+                                >
+                                  <FiPlusSquare
+                                    size="1rem"
+                                    style={{ margin: "0" }}
+                                  />
+                                </Button>
+                              </td>
+                            </tr>
+                          );
+                        }
+                      })}
                   </tbody>
                 </table>
               </>

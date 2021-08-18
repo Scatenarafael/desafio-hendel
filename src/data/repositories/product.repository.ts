@@ -12,6 +12,12 @@ import {
   relatedProductMapper,
 } from "../mappers/product.mapper";
 
+type CreateProductFormData = {
+  name: string;
+  description: string | null;
+  price: number;
+  quantity: number;
+};
 export class IProductDepository implements ProductRepositoty {
   async getProducts(page: number): Promise<Collection<ProductCollectionItem>> {
     const response = await httpClient.get("products", {

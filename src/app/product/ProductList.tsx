@@ -10,6 +10,7 @@ import { useQuery } from "react-query";
 import { queryClient } from "../../data/config/queryClient";
 import ErrorPage from "../layout/ErrorPage";
 import { RiAddLine } from "react-icons/ri";
+import CreateProductModal from "../layout/CreateProductModal";
 
 function ProductList() {
   const [search, setSearch] = useState("");
@@ -17,6 +18,8 @@ function ProductList() {
   const [optionQuantity, setOptionQuantity] = useState("=");
   const [productCollection, setProductCollection] =
     useState<Collection<ProductCollectionItem>>();
+  const [showCreateProductModal, setShowCreateProductModal] =
+    useState<boolean>(false);
 
   const [page, setPage] = useState(1);
 
@@ -29,6 +32,9 @@ function ProductList() {
     }
   );
 
+  const handleCloseCreateProductModal = () => {
+    setShowCreateProductModal(false);
+  };
   function handleRefresh() {
     refetch({ throwOnError: false, cancelRefetch: true });
   }
@@ -211,12 +217,15 @@ function ProductList() {
           >
             Atualizar
           </Button>
-          <Link to="/products/create">
-            <Button onClick={handleRefresh} style={{ marginLeft: "10px" }}>
-              <RiAddLine size="1.5rem" style={{ marginRight: "5px" }} />
-              Criar novo
-            </Button>
-          </Link>
+          <Button
+            onClick={() => {
+              setShowCreateProductModal(true);
+            }}
+            style={{ marginLeft: "10px" }}
+          >
+            <RiAddLine size="1.5rem" style={{ marginRight: "5px" }} />
+            Criar novo
+          </Button>
         </div>
       </Container>
       <div className="card shadow mb-4">
@@ -374,6 +383,11 @@ function ProductList() {
           </div>
         </div>
       </div>
+      <CreateProductModal
+        refresh={handleRefresh}
+        showCreateModal={showCreateProductModal}
+        handleCloseCreateModal={handleCloseCreateProductModal}
+      />
     </div>
   );
 }

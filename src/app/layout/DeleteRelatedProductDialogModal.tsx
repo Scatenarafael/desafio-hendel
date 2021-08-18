@@ -4,6 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useMutation } from "react-query";
 import { queryClient } from "../../data/config/queryClient";
+import { useEffect, useState } from "react";
 
 interface RelatedProductModalProps {
   refresh: () => void;
@@ -24,13 +25,15 @@ export default function DeleteRelatedProductDialogModal({
   showDeleteDialogModal,
   handleCloseDeleteDialogModal,
 }: RelatedProductModalProps) {
+  const [disabledSubmitButton, setDisabledSubmitButton] = useState(false);
+
   const removeRelatedProduct = useMutation(
     async () => {
       repo
         .removeRelatedProduct(mainProductId, relatedProductId)
         .then((response) => {
           console.log(response);
-          toast.success("Relacionament excluído com sucesso");
+          toast.success("Relacionamento excluído com sucesso");
           handleCloseDeleteDialogModal();
           refresh();
         })
@@ -45,7 +48,13 @@ export default function DeleteRelatedProductDialogModal({
       },
     }
   );
-
+  useEffect(() => {
+    if (removeRelatedProduct.isLoading) {
+      setDisabledSubmitButton(true);
+    } else {
+      setDisabledSubmitButton(false);
+    }
+  }, [removeRelatedProduct]);
   async function handleDeleteRelatedProduct() {
     await removeRelatedProduct.mutateAsync();
   }
@@ -64,7 +73,11 @@ export default function DeleteRelatedProductDialogModal({
           {`Tem certeza que deseja deletar o relacionamentro entre os produtos:${mainProductName} e ${relatedProductName} ?`}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleDeleteRelatedProduct}>
+          <Button
+            variant="danger"
+            onClick={handleDeleteRelatedProduct}
+            disabled={disabledSubmitButton}
+          >
             Sim
           </Button>
           <Button variant="secondary" onClick={handleCloseDeleteDialogModal}>

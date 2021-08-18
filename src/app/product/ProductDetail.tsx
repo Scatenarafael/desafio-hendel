@@ -9,7 +9,8 @@ import DeleteRelatedProductDialogModal from "../layout/DeleteRelatedProductDialo
 import { useQuery } from "react-query";
 import ErrorPage from "../layout/ErrorPage";
 import DeleteProductDialogModal from "../layout/DeleteProductDialogModal";
-
+import UpdateModal from "../layout/UpdateModal";
+import { BsPencilSquare } from "react-icons/bs";
 interface ProductParams {
   id: string;
 }
@@ -24,6 +25,11 @@ function ProductDetail() {
     useState<boolean>(false);
   const [showDeleteMainDialogModal, setShowDeleteMainDialogModal] =
     useState<boolean>(false);
+  const [fieldToUpdate, setFieldToUpdate] = useState("");
+  const [labelToUpdate, setLabelToUpdate] = useState("");
+  const [dataToUpdate, setDataToUpdate] = useState("");
+
+  const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
 
   const { isLoading, error, refetch } = useQuery(
     ["product", params.id],
@@ -34,6 +40,9 @@ function ProductDetail() {
     }
   );
 
+  const handleCloseUpdateModal = () => {
+    setShowUpdateModal(false);
+  };
   const handleCloseDeleteDialogModal = () => {
     setShowDeleteDialogModal(false);
   };
@@ -88,9 +97,69 @@ function ProductDetail() {
                   display: "flex",
                 }}
               >
-                {productData?.name}
+                <div
+                  style={{
+                    padding: "1rem",
+                    border: "3px solid",
+                    borderRadius: "10px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  Nome: {productData?.name}
+                  <Button
+                    variant="outline-primary"
+                    style={{
+                      padding: "0",
+                      marginLeft: "1rem",
+                      width: "30px",
+                      height: "30px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onClick={() => {
+                      setFieldToUpdate("name");
+                      setLabelToUpdate("Nome");
+                      setDataToUpdate(productData?.name);
+                      setShowUpdateModal(true);
+                    }}
+                  >
+                    <BsPencilSquare size={"20px"} />
+                  </Button>
+                </div>
                 <Card.Text style={{ marginLeft: "auto", marginRight: "1rem" }}>
-                  R${productData?.price}
+                  <div
+                    style={{
+                      padding: "1rem",
+                      border: "3px solid",
+                      borderRadius: "10px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    Preço: ${productData?.price}
+                    <Button
+                      variant="outline-primary"
+                      style={{
+                        marginLeft: "1rem",
+                        padding: "0",
+                        width: "30px",
+                        height: "30px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      onClick={() => {
+                        setFieldToUpdate("price");
+                        setLabelToUpdate("Preço");
+                        setDataToUpdate(String(productData?.price));
+                        setShowUpdateModal(true);
+                      }}
+                    >
+                      <BsPencilSquare size={"20px"} />
+                    </Button>
+                  </div>
                 </Card.Text>
               </Card.Title>
               <Card.Subtitle
@@ -108,7 +177,6 @@ function ProductDetail() {
                   year: "numeric",
                 })}
                 <div>
-                  <Button>Alterar</Button>
                   <Button
                     variant="danger"
                     style={{ marginLeft: "1rem" }}
@@ -127,8 +195,79 @@ function ProductDetail() {
                   justifyContent: "space-between",
                 }}
               >
-                <Card.Text style={{ fontSize: "2rem" }}>
-                  {productData?.description}
+                <Card.Text
+                  style={{
+                    fontSize: "2rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "1rem",
+                      border: "3px solid",
+                      borderRadius: "10px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    Descrição: {productData?.description}
+                    <Button
+                      variant="outline-primary"
+                      style={{
+                        marginLeft: "1rem",
+                        padding: "0",
+                        width: "30px",
+                        height: "30px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      onClick={() => {
+                        setFieldToUpdate("description");
+                        setLabelToUpdate("Descrição");
+                        setDataToUpdate(
+                          productData?.description === null
+                            ? ""
+                            : productData.description
+                        );
+                        setShowUpdateModal(true);
+                      }}
+                    >
+                      <BsPencilSquare size={"20px"} />
+                    </Button>
+                  </div>
+                  <div
+                    style={{
+                      padding: "1rem",
+                      border: "3px solid",
+                      borderRadius: "10px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    Qtd.: {productData?.quantity}
+                    <Button
+                      variant="outline-primary"
+                      style={{
+                        marginLeft: "1rem",
+                        padding: "0",
+                        width: "30px",
+                        height: "30px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      onClick={() => {
+                        setFieldToUpdate("quantity");
+                        setLabelToUpdate("Quantidade");
+                        setDataToUpdate(String(productData?.quantity));
+                        setShowUpdateModal(true);
+                      }}
+                    >
+                      <BsPencilSquare size={"20px"} />
+                    </Button>
+                  </div>
                 </Card.Text>
 
                 <div
@@ -224,6 +363,17 @@ function ProductDetail() {
         showDeleteMainDialogModal={showDeleteMainDialogModal}
         handleCloseDeleteMainDialogModal={handleCloseMainDeleteDialogModal}
       />
+      {productData && (
+        <UpdateModal
+          showUpdateModal={showUpdateModal}
+          refresh={handleRefresh}
+          productid={productData.id}
+          label={labelToUpdate}
+          field={fieldToUpdate}
+          data={dataToUpdate}
+          handleCloseUpdateModal={handleCloseUpdateModal}
+        />
+      )}
     </>
   );
 }
